@@ -1,0 +1,206 @@
+{
+  "name": "FormSimple AI",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "demo",
+        "formTitle": "Webinar n8n",
+        "formDescription": "Gracias por participar en el webinar",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "¿Te gustaría tomar nuestro curso de automatización con n8n?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Si"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Que quieres lograr con autiozaciones?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Cuál es la web de tu emprendiemiento?"
+            }
+          ]
+        },
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Gracias por participar"
+            }
+          }
+        }
+      },
+      "id": "c424c75f-e08d-4909-a78a-cba50388eed4",
+      "name": "n8n Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        360
+      ],
+      "webhookId": "38ef3fc5-e8b2-4e2a-8efc-00ef1a782195"
+    },
+    {
+      "parameters": {
+        "subject": "Bienvenid@ a Kairós Digital",
+        "body": "={{ $json.text }}",
+        "fromEmail": "noticias@kairosdigital.cl",
+        "toAddresses": [
+          "={{ $('n8n Form').item.json.Email }}"
+        ],
+        "additionalFields": {}
+      },
+      "id": "163879d8-2129-4228-928b-ced20ba3e812",
+      "name": "AWS SES",
+      "type": "n8n-nodes-base.awsSes",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        340
+      ],
+      "credentials": {
+        "aws": {
+          "id": "",
+          "name": "AWS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3-groq-70b-8192-tool-use-preview",
+        "options": {}
+      },
+      "id": "dd1f2e34-bd8b-4511-86f7-3c09dd2c50c2",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        560
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Escribe una correo de bienvenida a comunidad de Kairós Digital a:\nNombre: {{ $json.Nombre }}\nEmprendimiento: {{ $json['Cuál es la web de tu emprendiemiento?'] }}\nY su objetivo es: {{ $json['Que quieres lograr con autiozaciones?'] }}\n\nQue es la comunidad Kairós Digital:\nImagina un lugar donde la innovación se fusiona con la colaboración. Bienvenido a Kairós Digital, la comunidad donde la automatización de procesos cobra vida a través de herramientas de código abierto y la inteligencia artificial. Aquí, cada miembro es un arquitecto de su propio tiempo.\n\n¿Te sientes abrumado por tareas repetitivas? Kairós Digital es el refugio ideal para quienes buscan transformar su forma de trabajar. Descubre cómo la automatización puede liberarte de lo monótono, permitiéndote centrarte en lo que realmente importa: tus ideas, tus proyectos y tu creatividad.\n\nÚnete a un entorno donde el aprendizaje y el crecimiento son constantes. Participa en talleres prácticos, colabora en proyectos apasionantes y accede a una riqueza de recursos que te guiarán en tu viaje hacia la automatización efectiva. Conéctate con otros entusiastas que comparten tu visión y sé parte de una red vibrante que te impulsa a avanzar.\n\nEntrega solo el mail sin Subject.\nIntroduce en el texto el objetivo y el emprendimiento.\nUtiliza la metodología AIDA para el contenido.\nNo repitas frases, y trata de evitar el uso de palabras generalmente utilizadas por AI"
+      },
+      "id": "55078d9f-fa35-47c0-89f6-21f072e6a6c8",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1400,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Formulario Simple con inteligencia artificial\n### Video de referencia\nhttps://www.youtube.com/watch?v=yNotpTkxfd0\n\n### Caso de Uso\nRecibir información de solicitud de contacto y enviar correo ultra personalizado con AI\n\n\n### Utiliza\n- Formulario base de n8n -> Recibe información\n- Basic LLM Chain conectada con la API de Groq -> Procesa información con un promp base\n- AWS SES -> Envia correo personalizado",
+        "height": 220,
+        "width": 780,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1140,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "3beb5ab0-ca9b-49a4-a056-3cb7d65efaba",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "n8n Form": [
+      {
+        "json": {
+          "Nombre": "Cris",
+          "Email": "povap63278@hraifi.com",
+          "¿Te gustaría tomar nuestro curso de automatización con n8n?": "Si",
+          "Que quieres lograr con autiozaciones?": "vender mas y etner m,as tiempo libre",
+          "Cuál es la web de tu emprendiemiento?": "web.cl",
+          "submittedAt": "2024-10-09T17:03:13.639-03:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "n8n Form": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "AWS SES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eefb4cf2-976f-4c5a-8e0b-02f6f7dddc61",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32211f82e554b92789a2360db7b5709dd9f6576e5f925961007eeb271e8462e0"
+  },
+  "id": "AhMlXcGoDxZ5JD0Y",
+  "tags": [
+    {
+      "createdAt": "2024-09-24T10:31:38.772Z",
+      "updatedAt": "2024-10-22T13:14:58.350Z",
+      "id": "cqhtn9dIqxcvwEJ0",
+      "name": "Tutoriales"
+    }
+  ]
+}

@@ -1,0 +1,295 @@
+{
+  "name": "CasificaCorreosConAI",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "9121640c-0ef5-402f-b48e-9d882dc47c32",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        180
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hNfmYinTJ12vZX4b",
+          "name": "Gmail Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3-groq-8b-8192-tool-use-preview",
+        "options": {}
+      },
+      "id": "82478347-156d-4ca1-a685-89da5fee2195",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        440
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "n6ALYlcyqtPSGAa0",
+          "name": "GroqTutorial"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": "={{ $json.id }}"
+      },
+      "id": "6da1a8b3-0633-4f47-bf8b-2f605208d1f6",
+      "name": "Add labels to message",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        2200,
+        180
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "a2aa4276-41d1-4c96-b7f2-8a2ae3fc35b9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hNfmYinTJ12vZX4b",
+          "name": "Gmail Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "labels",
+        "options": {}
+      },
+      "id": "009bd335-64fc-406c-bf05-cdddd94a8cbd",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "labels",
+              "type": "arrayValue",
+              "arrayValue": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "12a63af4-a631-4821-8c14-29b538b5c5a6",
+      "name": "Set label values",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1520,
+        180
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "id": "d0f812d8-ec66-473d-a25a-c7a7b3a6accb",
+      "name": "Get all labels",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1700,
+        60
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "c93388c3-686c-4dbf-bbc8-ce0394ca884c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hNfmYinTJ12vZX4b",
+          "name": "Gmail Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "name",
+              "field2": "labels"
+            }
+          ]
+        },
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "id": "c068960e-33d1-4f2d-bb26-f8eede76ef9b",
+      "name": "Merge corresponding labels",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1980,
+        200
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu tarea es categorizar el mensaje según las siguientes etiquetas. \nInquiry - correo electrónico sobre productos, servicios.\nNotification - correo electrónico que no requiere respuesta. \n\nUn correo electrónico puede tener más de una etiqueta. \nRegresa solo los nombres de etiquetas en formato Array como cadenas, nada más. No inventes nada. "
+            }
+          ]
+        }
+      },
+      "id": "5e7fb088-68e8-495a-aafd-472460e79a93",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1180,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Clasificar correos con IA\n### Video de referencia\nhttps://youtu.be/YV7nLYjejvQ\n\n### Caso de Uso\nConocer el funcionamiento de GMAIL y Cadenas de LLM con Groq\nEl flujo clasifica los correos recibidos y los clasifica en distintas categorías\n",
+        "height": 280,
+        "width": 1080,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "708a21f4-e9d3-4237-b18b-368fb95ce901",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Merge corresponding labels",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set label values": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get all labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all labels": {
+      "main": [
+        [
+          {
+            "node": "Merge corresponding labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Set label values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge corresponding labels": {
+      "main": [
+        [
+          {
+            "node": "Add labels to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1ece2cc1-e60d-411a-81fc-58920b298bb6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32211f82e554b92789a2360db7b5709dd9f6576e5f925961007eeb271e8462e0"
+  },
+  "id": "vQpTt26yY5F3Ntk7",
+  "tags": [
+    {
+      "createdAt": "2024-09-24T10:31:38.772Z",
+      "updatedAt": "2024-10-22T13:14:58.350Z",
+      "id": "cqhtn9dIqxcvwEJ0",
+      "name": "Tutoriales"
+    }
+  ]
+}

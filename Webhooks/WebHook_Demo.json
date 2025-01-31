@@ -1,0 +1,194 @@
+{
+  "name": "WebHook Demo",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.dscto }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "5e41f049-1c81-4b7e-a1f1-c8560eca8915",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1060,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webprueba",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "ab01a7f0-32e4-48c3-8148-091f03228f07",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        320,
+        340
+      ],
+      "webhookId": "e82a1bed-5f6b-4306-b7e1-8e80306df09f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dde3e8b9-9c0d-4de4-b09a-06d2f6177a17",
+              "leftValue": "={{ $json.headers.authorization }}",
+              "rightValue": "Bearer TOKEN",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        540,
+        340
+      ],
+      "id": "a4daebb9-fbf1-4e5d-84c1-8087abf39f2a",
+      "name": "EstaAutorizado?"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Error",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        460
+      ],
+      "id": "133536cf-b970-4c71-a44a-f10cab994006",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "",
+        "table": "",
+        "limit": 1,
+        "options": {
+          "where": "=(rut,eq,{{ $json.body.rut }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        760,
+        240
+      ],
+      "id": "fbd737cb-f637-4483-acdc-094b97ed6901",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Demostración de un Webhook simple.\n- Expone un endpont tipo POST\n- Utiliza una autorización tipo Bearer Token\n- Recibe un campo RUT\n- Busca datos en NocoDB\n- Responde con el campo de descuento asociado al RUT\n",
+        "height": 200,
+        "width": 440,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        260,
+        60
+      ],
+      "typeVersion": 1,
+      "id": "ddf5ecf4-a9a3-4aec-b72b-de1bd173c104",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "EstaAutorizado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EstaAutorizado?": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5bc34230-b831-4038-a738-563dc2285921",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32211f82e554b92789a2360db7b5709dd9f6576e5f925961007eeb271e8462e0"
+  },
+  "id": "NSKAaDo30XLgbKTS",
+  "tags": [
+    {
+      "createdAt": "2024-09-24T10:31:38.772Z",
+      "updatedAt": "2024-10-22T13:14:58.350Z",
+      "id": "cqhtn9dIqxcvwEJ0",
+      "name": "Tutoriales"
+    }
+  ]
+}
