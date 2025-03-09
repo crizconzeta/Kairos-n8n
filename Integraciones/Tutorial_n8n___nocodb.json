@@ -1,0 +1,112 @@
+{
+  "name": "Tutorial n8n - nocodb",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "49276451-3b62-4e18-a8c0-1ab7a3c205ab",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pcdrdmidko5oz5y",
+        "table": "idtable",
+        "returnAll": true,
+        "options": {
+          "where": "(estado,eq,dormido)"
+        }
+      },
+      "id": "498da6c0-4094-4dfd-a359-05253d7b930c",
+      "name": "NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        900,
+        400
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "jcFD5gFjntcdbNrn",
+          "name": "NocoDB Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "idproyecto",
+        "table": "gguidtable",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "texto",
+              "fieldValue": "es una prueba"
+            }
+          ]
+        }
+      },
+      "id": "06dbd9da-9f4c-4e3a-a619-576c95122494",
+      "name": "NocoDB1",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        400
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "idtoken",
+          "name": "NocoDB Token"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "NocoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5a2f9d5c-a0d9-43dd-8ee8-bd0c612d8cc2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32211f82e554b92789a2360db7b5709dd9f6576e5f925961007eeb271e8462e0"
+  },
+  "id": "v1MrFfpni0XYAwDR",
+  "tags": []
+}

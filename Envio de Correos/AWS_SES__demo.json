@@ -1,0 +1,73 @@
+{
+  "name": "AWSSES  - demo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "75ddd566-f740-4b98-b779-1a183dce3f9b",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "subject": "Hola",
+        "body": "Es una prueba",
+        "fromEmail": "tu@correo.com",
+        "toAddresses": [
+          "wocap86140@perceint.com"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.awsSes",
+      "typeVersion": 1,
+      "position": [
+        260,
+        0
+      ],
+      "id": "b3219529-3be0-4063-959d-8da376b19355",
+      "name": "AWS SES",
+      "credentials": {
+        "aws": {
+          "id": "",
+          "name": "AWS credentials"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "AWS SES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0317b582-bda2-46a2-bffb-976e2c9074d8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32211f82e554b92789a2360db7b5709dd9f6576e5f925961007eeb271e8462e0"
+  },
+  "id": "PpjnJiXd3UxKiIyz",
+  "tags": [
+    {
+      "createdAt": "2024-09-24T10:31:38.772Z",
+      "updatedAt": "2024-10-22T13:14:58.350Z",
+      "id": "cqhtn9dIqxcvwEJ0",
+      "name": "Tutoriales"
+    }
+  ]
+}
