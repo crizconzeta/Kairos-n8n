@@ -1,0 +1,476 @@
+{
+  "name": "AI Chatbot - \"Privado\"",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e19996c6-61bf-46c2-9a26-a179fc5c937f",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -1040,
+        1240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9396d09c-c49e-4114-8112-2aae86c58072",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        840,
+        1120
+      ],
+      "webhookId": "1727c687-aed0-49cf-96af-e7796819fbb3",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bb4ec444-e00d-48a3-99e9-ec426e3cb139",
+      "name": "Embeddings OpenAI2",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        1480,
+        1560
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "openAiApi": {
+          "id": "8ccZocwMNkQqEruH",
+          "name": "OAI Base n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1-mini",
+        "options": {}
+      },
+      "id": "61e3707b-aa32-45cc-8b90-16cf89675391",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1080,
+        1380
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "openAiApi": {
+          "id": "8ccZocwMNkQqEruH",
+          "name": "OAI Base n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Leerá el archivo local especificado en 'Set Local File Path'",
+        "height": 318,
+        "width": 220,
+        "color": 7
+      },
+      "id": "9785a887-98b0-45f0-9d65-908e0cb322da",
+      "name": "Sticky Note - File Source (Local)",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -840,
+        1160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5254ad2b-f738-42b8-8de0-341747654409",
+              "name": "file_path",
+              "value": "/files/Winner.pdf",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1a4da103-3068-4953-8bfd-ee671de18203",
+      "name": "Set Local File Path",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        -780,
+        1240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "30c00092-ffc7-4076-b484-516f4f327f5a",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        -100,
+        1480
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "openAiApi": {
+          "id": "8ccZocwMNkQqEruH",
+          "name": "OAI Base n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 1. Setup: Leer archivo local, dividirlo en chunks e insertarlo en la base de datos vectorial (Supabase)\nNota: Ejecutar esta parte varias veces insertará múltiples copias en tu BD.",
+        "height": 728,
+        "width": 1506,
+        "color": 7
+      },
+      "id": "dd18adc7-503b-41b1-a7e0-e751e93d6225",
+      "name": "Sticky Note - Setup1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1100,
+        1040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_path",
+                "value": "={{ $('Add in metadata1').item.json.file_path }}"
+              },
+              {
+                "name": "file_name",
+                "value": "={{ $('Add in metadata1').item.json.file_name }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "1b18d34f-2925-4dc8-8c6e-c287f4759804",
+      "name": "Default Data Loader1",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        60,
+        1440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Pruébame\n\n1. Asegúrate de que la ruta en 'Set Local File Path' sea correcta y accesible para n8n.\n\n2. En Supabase, crea una tabla con la extensión `pgvector` habilitada (ej. `documentos_pdf`) y configúrala en los nodos de Supabase Vector Store.\n\n3. Introduce datos en Supabase haciendo clic en el botón 'test workflow'.\n\n",
+        "height": 711,
+        "width": 400,
+        "color": 3
+      },
+      "id": "b285f5ae-6937-46dd-8e6e-aedbedafc981",
+      "name": "Sticky Note - Try me out1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1520,
+        1040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Añade metadatos al item\n$input.item.json.file_name = $json.fileName;\n$input.item.json.file_ext = $json.fileExtension;\n$input.item.json.file_path = $json.directory\n\nreturn $input.item;"
+      },
+      "id": "e2cc028d-bfde-4915-b3f0-ce505a9037b8",
+      "name": "Add in metadata1",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -300,
+        1240
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "id": "21ff1330-7c69-4b30-bc2f-0f56a46d6f8a",
+      "name": "Add to Supabase vector store1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        -60,
+        1240
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "81d5bNA6sf614iuB",
+          "name": "Supabase ADC"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "id": "a24dcf11-c83b-4525-abc2-85961d4a4112",
+      "name": "Recursive Character Text Splitter1",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        80,
+        1600
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.file_path }}",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        1240
+      ],
+      "id": "82e5811c-456f-40c9-bbb6-2c0a7c636396",
+      "name": "Read/Write Files from Disk1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Usa los siguientes fragmentos de contexto para responder la pregunta al final. Si no sabes la respuesta, simplemente di que no lo sabes. No intentes inventar una respuesta. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1140,
+        1120
+      ],
+      "id": "85c4385d-7377-4f47-b81c-b80ac6d68d3b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents",
+        "toolDescription": "=Consulta los documentos",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        1420,
+        1320
+      ],
+      "id": "773ed969-a29d-420a-b6f4-d610e453a6fc",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "81d5bNA6sf614iuB",
+          "name": "Supabase ADC"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1240,
+        1380
+      ],
+      "id": "4ddc46c5-536a-4764-b044-52869b359214",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## 2. Conversa con tu documento\n",
+        "height": 728,
+        "width": 1506,
+        "color": 5
+      },
+      "id": "4f808222-1e97-4131-9249-b70eaf9aa3d8",
+      "name": "Sticky Note - Setup2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        540,
+        1040
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Set Local File Path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Add to Supabase vector store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Add to Supabase vector store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add in metadata1": {
+      "main": [
+        [
+          {
+            "node": "Add to Supabase vector store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Local File Path": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Add in metadata1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "514c2c42-9f57-4959-b626-1222be824e17",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64f198968c97f6c185ab07b3dd8aa0def39898f4ecf03d2522b5d0b9620f1052"
+  },
+  "id": "PMjSqGAqzBNmo6bc",
+  "tags": []
+}
