@@ -1,0 +1,225 @@
+{
+  "name": "GMAIL TEST - MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Utiliza esta herramienta para revisar mi correo.\nRetorna información resumida del contenido.\n\nNota contextual:\nLa fecha es {{ $now.toLocal().setLocale('es').format('dd LLLL yyyy') }} y la hora actual {{ $now.toLocal().setLocale('es').format('HH:MM') }} ",
+        "operation": "getAll",
+        "limit": 13,
+        "filters": {
+          "readStatus": "unread",
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', `La fecha desde cuando buscar, si no especifica, busca desde ayer.`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        200,
+        380
+      ],
+      "id": "62f93259-9259-4b2b-a59e-11a7cefd87ee",
+      "name": "RevisarCorreo",
+      "webhookId": "1b202041-7ac9-47ee-b37a-2d0d69196b99",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "12345678",
+          "name": "Gmail Acc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "6dccd40e-598c-41d0-a08e-9612c4943a27"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "be7f431b-0c6c-46c6-a778-f85058e6af79",
+      "name": "Correo Gmail - MCP",
+      "webhookId": "6dccd40e-598c-41d0-a08e-9612c4943a27",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "4LAvadxNAxoUnje2",
+          "name": "MCP Bearer"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Utiliza esta herramienta para buscar correos con contexto o palabra clave.\n\nNota contextual:\nLa fecha es {{ $now.toLocal().setLocale('es').format('dd LLLL yyyy') }} y la hora actual {{ $now.toLocal().setLocale('es').format('HH:MM') }} ",
+        "operation": "getAll",
+        "limit": 13,
+        "filters": {
+          "q": "=in:anywhere {{ $fromAI('PalabraClave', `La palabra clave a buscar`, 'string') }}",
+          "readStatus": "both",
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', `La fecha desde cuando buscar, si no especifica, busca desde el inicio del año en curso.`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        380
+      ],
+      "id": "22739ba4-4c71-4199-9693-3ed49e049e35",
+      "name": "BuscarCorreosPorContexto",
+      "webhookId": "bab508d7-f411-422e-9ae0-696e6d78c92b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "12345678",
+          "name": "Gmail Acc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "trash",
+        "threadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Thread_ID', `threadId del menaje a eliminar, se obtiene con la herramienta RevisarCorreo`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        380
+      ],
+      "id": "d0ef6246-a15e-48ea-bd59-fc77f7ea5ca0",
+      "name": "EliminarCorreoAPapelera",
+      "webhookId": "26e44156-d7e5-46cb-8c85-60d135792210",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "12345678",
+          "name": "Gmail Acc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Utiliza esta herramienta para buscar correos enviados por un contacto en particular, el contacto debe ser un correo electrónico válido o un nombre.\nRetorna información resumida del contenido.\n\nNota contextual:\nLa fecha es {{ $now.toLocal().setLocale('es').format('dd LLLL yyyy') }} y la hora actual {{ $now.toLocal().setLocale('es').format('HH:MM') }} ",
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {
+          "readStatus": "both",
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', `La fecha desde cuando buscar, si no especifica, busca desde el inicio del año en curso.`, 'string') }}",
+          "sender": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender', `El nombre o correo de la persona que envió el correo`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        360,
+        380
+      ],
+      "id": "1c9c576d-7817-43de-88b2-005bbcb80a8b",
+      "name": "BuscarCorreosPorContacto",
+      "webhookId": "80b6c417-fa0d-45c5-9938-4f63dc586fe0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "12345678",
+          "name": "Gmail Acc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Utiliza esta herramienta para conseguir el cuerpo completo de un correo. Necesitas el Id del correo.\nId del correo a obtener, lo puedes conseguir con la herramienta RevisarCorreos",
+        "operation": "get",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `Id del correo a obtener, lo DEBE conseguir con la herramienta RevisarCorreos`, 'string') }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        700,
+        380
+      ],
+      "id": "93d85424-911e-456f-af70-f79800fa4adb",
+      "name": "LeerCuerpoDelCorreo",
+      "webhookId": "5e0451c2-5384-4bfd-b847-e84375243be9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "12345678",
+          "name": "Gmail Acc"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RevisarCorreo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Correo Gmail - MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscarCorreosPorContexto": {
+      "ai_tool": [
+        [
+          {
+            "node": "Correo Gmail - MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EliminarCorreoAPapelera": {
+      "ai_tool": [
+        [
+          {
+            "node": "Correo Gmail - MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscarCorreosPorContacto": {
+      "ai_tool": [
+        [
+          {
+            "node": "Correo Gmail - MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LeerCuerpoDelCorreo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Correo Gmail - MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "96f7c464-4b7e-4d4f-b23e-736aa9d0e03b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32211f82e554b92789a2360db7b5709dd9f6576e5f925961007eeb271e8462e0"
+  },
+  "id": "KbQW33HCDAdQQK7i",
+  "tags": []
+}
