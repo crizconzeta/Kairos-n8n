@@ -1,0 +1,246 @@
+{
+  "name": "Asistente Gmail",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Agente AI en tu Gmail\n### Video de referencia\nhttps://www.youtube.com/watch?v=wVBR2Crc5GQ\n\n### Video Versión 1 del flujo (etiquetar correos con AI)\nhttps://youtu.be/YV7nLYjejvQ\n\n## Caso de Uso\nSegún reglas explícitas, clasificar marcas como leídos o dejar pendientes correos.\n\n",
+        "height": 300,
+        "width": 600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        860,
+        -560
+      ],
+      "typeVersion": 1,
+      "id": "16e5c858-58bb-463c-8230-a4c0e596d8fe",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "6cb2e3e5-a145-4e9c-b3c6-f407ccd49ca3",
+      "name": "Gmail Trigger1",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        -120
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QJw8YRw9zYxd1Ewa",
+          "name": "Credenciales Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        80
+      ],
+      "id": "eff60ee0-2ddd-4e49-9cca-8482599d3fe5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "tHVA3X9Ez0XgcVjc",
+          "name": "OpenAi n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Texto del mensaje\n\n{{ $json.text }}\n\n\nId del mensaje\n\n{{ $json.id }}",
+        "options": {
+          "systemMessage": "## Objetivo \nTu tarea es manejar y asistirme en las tareas correspondientes al correo electrónico.\nDado el siguiente correo decide como actuar.\n\n## Reglas \n- Correos sobre mí o mi negocio solo puedes etiquetarlas.\n- Correos sobre pagos deben ser marcados como importantes. \n- Los correos sobre proyectos debes agregarle la equiquete Proyectos y dejarlos SIB leer.\n- Correos con promociones o marketing pueden ser marcadas como leidas.\n\nUtiliza las herramientas a tu disposición para actuar sobre los correos.\nNo hagas preguntas de seguimiento, solo realiza las acciones."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        -200
+      ],
+      "id": "23300540-d4db-4071-ae64-14999c28cd60",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Agrega una etiqueta a un mensaje",
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', `Indica la etiqueta a agregar. Puedes conseguir las etiquetas con la herramienta GetLabels.\nDebes pasar el ID no el nombre.`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1480,
+        80
+      ],
+      "id": "7baba3c1-7252-4f08-b94c-c211588dc6e4",
+      "name": "AgregarEtiqueta",
+      "webhookId": "af658d7f-b6d9-4ae3-8823-61de55dd397e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QJw8YRw9zYxd1Ewa",
+          "name": "Credenciales Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consigue las etiquetas o tags para asociarlas a un correo",
+        "resource": "label",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1620,
+        80
+      ],
+      "id": "5d210737-6400-43a3-81d7-17a6ae4374b3",
+      "name": "GetLabels",
+      "webhookId": "82ba0240-7c7a-4fbb-8dba-173f898b89de",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QJw8YRw9zYxd1Ewa",
+          "name": "Credenciales Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Marca un correo como leído. Solo cuando sea necesario.\n",
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `ID del mensaje lo obtienes del primer nodo,.`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1720,
+        60
+      ],
+      "id": "4ffe6caa-7acc-467c-8d58-d72b5061d123",
+      "name": "MarkAsRead",
+      "webhookId": "e254097f-b6c9-4770-a2e6-5a856a569bf1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QJw8YRw9zYxd1Ewa",
+          "name": "Credenciales Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Sobre Kairós\n\nTenemos lista de correo con tenido exclusivo y servidor de discord, para resolver dudas\nhttps://kairosdigital.cl/kits-de-herramientas/automatizacion-de-procesos/\nhttps://discord.com/invite/cHAc3bJxxe\nCrea tu cuenta de n8n en: https://n8n.partnerlinks.io/vihfa9ov2fyg (Link afiliado)\n",
+        "height": 300,
+        "width": 440,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1500,
+        -560
+      ],
+      "typeVersion": 1,
+      "id": "45950d6a-1360-4f42-aba5-c725fc26f3bb",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AgregarEtiqueta": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetLabels": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MarkAsRead": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3344bc5c-cfe4-4641-aa67-22e7683ee25f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "765ef08021c2400ed39c53b2387d4fb54424fcfb0e699e573bd8699c91494a1f"
+  },
+  "id": "pTYOMgFZbDX0nqq4",
+  "tags": []
+}
